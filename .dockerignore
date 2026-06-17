@@ -1,13 +1,41 @@
+# Залежності (вони будуть встановлені всередині контейнера)
 vendor/
 node_modules/
+
+# Кеш та тимчасові файли
 storage/
 public/hot
 public/storage
+bootstrap/cache/
+
+# Змінні середовища (не копіюємо)
 .env
-.git
+.env.*
+!.env.example
+
+# Git
+.git/
 .gitignore
+.gitattributes
+
+# Docker та інші конфіги (не потрібні всередині контейнера)
 Dockerfile
 docker-compose.yml
-README.md
+.dockerignore
+
+# IDE та системні файли
 .idea/
 .vscode/
+.DS_Store
+Thumbs.db
+
+# Логи та звіти
+*.log
+*.sql
+*.zip
+*.tar.gz
+
+# README та інші документаційні файли
+README.md
+LICENSE
+CHANGELOG.md
