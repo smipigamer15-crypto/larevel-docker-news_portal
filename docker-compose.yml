@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # MySQL база даних
+  
   mysql:
     image: mysql:8.0
     container_name: news_portal_mysql
@@ -18,7 +18,7 @@ services:
     networks:
       - app-network
 
-  # PHP + Apache
+  
   app:
     build:
       context: .
@@ -26,7 +26,7 @@ services:
     container_name: news_portal_app
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8082:80"
     volumes:
       - ./:/var/www/html
       - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -35,7 +35,7 @@ services:
     networks:
       - app-network
 
-  # phpMyAdmin (опціонально)
+  
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: news_portal_phpmyadmin
@@ -51,7 +51,7 @@ services:
     networks:
       - app-network
 
-  # Redis (опціонально)
+  
   redis:
     image: redis:alpine
     container_name: news_portal_redis
