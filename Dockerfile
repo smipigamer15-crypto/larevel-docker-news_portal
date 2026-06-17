@@ -12,22 +12,28 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ===== ПРИМУСОВА ПЕРЕЗБІРКА (змінюється при кожному запуску) =====
-RUN echo "Force rebuild at $(date)" > /tmp/force
+# ===== ТИМЧАСОВІ ЗМІННІ ДЛЯ ЗБІРКИ =====
+ENV APP_ENV=local
+ENV APP_KEY=base64:asMGfKz5KS6j6itGGwKjOFYjtqdS03p/9E7ZMYvrcvg=
+ENV DB_CONNECTION=sqlite
+ENV SESSION_DRIVER=file
+ENV CACHE_DRIVER=file
 
 # Копіюємо composer.json і composer.lock для кешування
 COPY composer.json composer.lock ./
 
-# Встановлюємо залежності
+# Встановлюємо залежності (тепер без помилок)
 RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
 
 # Копіюємо решту файлів
 COPY . .
 
+# Створюємо папки та права
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 755 storage bootstrap/cache
 
+# Змінюємо DocumentRoot
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
