@@ -12,9 +12,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY . .
+# ===== ПРИМУСОВА ПЕРЕЗБІРКА (змінюється при кожному запуску) =====
+RUN echo "Force rebuild at $(date)" > /tmp/force
 
+# Копіюємо composer.json і composer.lock для кешування
+COPY composer.json composer.lock ./
+
+# Встановлюємо залежності
 RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+
+# Копіюємо решту файлів
+COPY . .
 
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
