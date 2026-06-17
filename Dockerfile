@@ -19,18 +19,20 @@ ENV DB_CONNECTION=sqlite
 ENV SESSION_DRIVER=file
 ENV CACHE_DRIVER=file
 
-# Копіюємо всі файли
 COPY . .
 
-# ===== ВАЖЛИВО: створюємо папки до composer install =====
-RUN mkdir -p storage bootstrap/cache \
+# ===== ВАЖЛИВО: створюємо всі папки перед composer install =====
+RUN mkdir -p storage/framework/views \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/testing \
+    storage/logs \
+    bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 755 storage bootstrap/cache
 
-# Тепер composer install може писати в cache
 RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
 
-# Змінюємо DocumentRoot
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
