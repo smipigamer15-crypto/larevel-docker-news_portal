@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # MySQL база даних
+  mysql:
+    image: mysql:8.0
+    container_name: news_portal_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: news_portal
+      MYSQL_USER: news_user
+      MYSQL_PASSWORD: news_password 
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # PHP + Apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: news_portal_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # phpMyAdmin (опціонально)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: news_portal_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  # Redis (опціонально)
+  redis:
+    image: redis:alpine
+    container_name: news_portal_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
