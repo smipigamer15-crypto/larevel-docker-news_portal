@@ -40,6 +40,13 @@
             <a href="{{ route('home') }}">NEWS</a>
         </div>
 
+
+
+    <button class="menu-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+    </button>
+
+
         <ul class="nav-menu">
 
     <li>
