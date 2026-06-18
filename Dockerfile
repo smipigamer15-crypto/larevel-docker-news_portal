@@ -12,22 +12,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Тимчасові змінні для збірки
-ENV APP_ENV=local
-ENV APP_KEY=base64:asMGfKz5KS6j6itGGwKjOFYjtqdS03p/9E7ZMYvrcvg=
-ENV DB_CONNECTION=sqlite
-ENV SESSION_DRIVER=file
-ENV CACHE_DRIVER=file
-
 COPY . .
 
-# ===== ВАЖЛИВО: створюємо всі папки перед composer install =====
-RUN mkdir -p storage/framework/views \
-    storage/framework/cache \
-    storage/framework/sessions \
-    storage/framework/testing \
-    storage/logs \
-    bootstrap/cache \
+RUN mkdir -p storage/framework/views storage/framework/cache storage/framework/sessions storage/framework/testing storage/logs bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 755 storage bootstrap/cache
 
