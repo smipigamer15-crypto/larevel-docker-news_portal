@@ -9,8 +9,19 @@ Dashboard
     <div class="dashboard-grid">
         <aside class="dashboard-sidebar">
             <div class="profile-card">
-                <div class="profile-avatar">
-                    <span>{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                <div class="profile-avatar" style="position: relative;">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/'.Auth::user()->avatar) }}" 
+                             alt="{{ Auth::user()->name }}" 
+                             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                    @else
+                        <span>{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                    @endif
+                    <button onclick="document.getElementById('avatarInput').click()" 
+                            style="position: absolute; bottom: 0; right: 0; background: #e30613; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="uploadAvatar(this)">
                 </div>
                 <h3>{{ Auth::user()->name }}</h3>
                 <p>{{ Auth::user()->email }}</p>
@@ -37,6 +48,9 @@ Dashboard
                 </a>
                 <a href="#" class="profile-nav-item" data-tab="saved">
                     <i class="fa-regular fa-bookmark"></i> Saved
+                </a>
+                <a href="#" class="profile-nav-item" data-tab="liked">
+                    <i class="fa-solid fa-heart"></i> Liked
                 </a>
                 <a href="#" class="profile-nav-item" data-tab="history">
                     <i class="fa-regular fa-clock"></i> History
@@ -66,7 +80,7 @@ Dashboard
                     </div>
                 @endif
                 
-                <form method="POST" action="{{ route('profile.update') }}" class="profile-form">
+                <form method="POST" action="{{ route('profile.update') }}" class="profile-form" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     
@@ -143,7 +157,7 @@ Dashboard
             @foreach($comments as $comment)
                 <div class="comment-item-dashboard" id="dashboard-comment-{{ $comment->id }}">
                     <div class="comment-content-dashboard">
-                        <a href="{{ route('news.show', $comment->news_id) }}" class="comment-info">
+                        <a href="{{ route('news.show', $comment->news->slug) }}" class="comment-info">
                             <h3 class="comment-title">{{ $comment->news->title ?? 'News' }}</h3>
                             <p class="comment-text-dashboard">{{ $comment->content }}</p>
                             <div class="comment-footer">
@@ -154,7 +168,7 @@ Dashboard
                             </div>
                         </a>
                     </div>
-                    <button class="btn-delete-comment-dashboard" onclick="deleteDashboardComment({{ $comment->id }})">
+                    <button class="btn-delete-comment-dashboard" onclick="deleteDashboardComment({{ $comment->id }}, this)">
                         <i class="fa-regular fa-trash-alt"></i> Delete
                     </button>
                 </div>
@@ -180,7 +194,7 @@ Dashboard
         @foreach($saved as $item)
             <div class="saved-item" id="saved-item-{{ $item->id }}">
                 <div class="saved-content">
-                    <a href="{{ route('news.show', $item->id) }}">
+                    <a href="{{ route('news.show', $item->slug) }}">
                         <h3>{{ $item->title ?? 'Untitled' }}</h3>
                         <p>{{ Str::limit($item->content ?? '', 100) }}</p>
                         <span>
@@ -189,7 +203,7 @@ Dashboard
                         </span>
                     </a>
                 </div>
-                <button class="btn-remove-saved" onclick="removeFromSaved({{ $item->id }})">
+                <button class="btn-delete-comment-dashboard" onclick="removeFromSaved({{ $item->id }}, this)">
                     <i class="fa-regular fa-trash-alt"></i> Delete
                 </button>
             </div>
@@ -204,40 +218,87 @@ Dashboard
 </div>
 
 
-            <div class="tab-content" id="tab-history">
-                <div class="tab-header">
-                    <h2><i class="fa-regular fa-clock"></i> Viewing history</h2>
-                    <p>Articles viewed: {{ $viewedArticles ?? 0 }}</p>
+<div class="tab-content" id="tab-liked">
+    <div class="tab-header">
+        <h2><i class="fa-solid fa-heart"></i> Liked articles</h2>
+        <p>Total liked: {{ $likedCount ?? 0 }}</p>
+    </div>
+    
+    @if(isset($likedNews) && count($likedNews) > 0)
+        @foreach($likedNews as $item)
+            <div class="saved-item" id="liked-item-{{ $item->id }}">
+                <div class="saved-content">
+                    <a href="{{ route('news.show', $item->slug) }}">
+                        <h3>{{ $item->title ?? 'Untitled' }}</h3>
+                        <p>{{ Str::limit($item->content ?? '', 100) }}</p>
+                        <span>
+                            <i class="fa-regular fa-calendar"></i>
+                            {{ $item->created_at ? $item->created_at->format('d.m.Y') : 'Date unknown' }}
+                        </span>
+                    </a>
                 </div>
-                
-                @if(isset($history) && count($history) > 0)
-                    @foreach($history as $item)
-                        <div class="history-item">
-                            <a href="{{ route('news.show', $item->id) }}">
-                                <h3>{{ $item->title ?? 'Untitled' }}</h3>
-                                <span>
-                                    @if(isset($item->pivot->created_at) && $item->pivot->created_at)
-                                        {{ \Carbon\Carbon::parse($item->pivot->created_at)->format('d.m.Y H:i') }}
-                                    @elseif(isset($item->pivot->viewed_at) && $item->pivot->viewed_at)
-                                        {{ \Carbon\Carbon::parse($item->pivot->viewed_at)->format('d.m.Y H:i') }}
-                                    @else
-                                        Date unknown
-                                    @endif
-                                </span>
-                            </a>
-                        </div>
-                    @endforeach
-                @else
-                    <div class="empty-state">
-                        <i class="fa-regular fa-clock"></i>
-                        <p>You haven't viewed any articles yet</p>
-                        <a href="{{ route('news.index') }}" class="btn-empty">Start reading</a>
-                    </div>
-                @endif
+                <button class="btn-delete-comment-dashboard" onclick="unlikeNews({{ $item->id }}, this)">
+                    <i class="fa-regular fa-heart"></i> Unlike
+                </button>
             </div>
+        @endforeach
+    @else
+        <div class="empty-state">
+            <i class="fa-regular fa-heart"></i>
+            <p>You haven't liked any articles yet</p>
+            <a href="{{ route('news.index') }}" class="btn-empty">Read news</a>
+        </div>
+    @endif
+</div>
+
+
+<div class="tab-content" id="tab-history">
+    <div class="tab-header">
+        <div class="tab-header-content">
+            <div>
+                <h2><i class="fa-regular fa-clock"></i> Viewing history</h2>
+                <p id="history-count">Articles viewed: {{ $viewedArticles ?? 0 }}</p>
+            </div>
+            @if(isset($history) && count($history) > 0)
+                <button onclick="clearHistory(this)" class="btn-delete-comment-dashboard" id="clear-history-btn">
+                    <i class="fa-regular fa-trash-alt"></i> Clear history
+                </button>
+            @endif
+        </div>
+    </div>
+    
+    <div id="history-list">
+        @if(isset($history) && count($history) > 0)
+            @foreach($history as $item)
+                <div class="history-item" id="history-item-{{ $item->id }}">
+                    <a href="{{ route('news.show', $item->slug) }}">
+                        <h3>{{ $item->title ?? 'Untitled' }}</h3>
+                        <span>
+                            @if(isset($item->pivot->created_at) && $item->pivot->created_at)
+                                {{ \Carbon\Carbon::parse($item->pivot->created_at)->format('d.m.Y H:i') }}
+                            @elseif(isset($item->pivot->viewed_at) && $item->pivot->viewed_at)
+                                {{ \Carbon\Carbon::parse($item->pivot->viewed_at)->format('d.m.Y H:i') }}
+                            @else
+                                Date unknown
+                            @endif
+                        </span>
+                    </a>
+                </div>
+            @endforeach
+        @else
+            <div class="empty-state" id="history-empty">
+                <i class="fa-regular fa-clock"></i>
+                <p>You haven't viewed any articles yet</p>
+                <a href="{{ route('news.index') }}" class="btn-empty">Start reading</a>
+            </div>
+        @endif
+    </div>
+</div>
         </main>
     </div>
 </div>
+
+<!-- СТИЛІ ТА СКРИПТИ ЗАЛИШАЮТЬСЯ ТАКІ Ж ЯК БУЛИ -->
 
 <style>
     .dashboard-container {
@@ -277,12 +338,20 @@ Dashboard
         align-items: center;
         justify-content: center;
         margin: 0 auto 16px;
+        position: relative;
     }
     
     .profile-avatar span {
         font-size: 32px;
         font-weight: 600;
         color: white;
+    }
+    
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
     }
     
     .profile-card h3 {
@@ -491,6 +560,7 @@ Dashboard
     .comment-item, .saved-item, .history-item {
         padding: 16px;
         border-bottom: 1px solid #eee;
+        transition: all 0.3s ease;
     }
     
     .comment-item:last-child, .saved-item:last-child, .history-item:last-child {
@@ -619,26 +689,51 @@ Dashboard
     color: #999;
 }
 
-.btn-remove-saved {
-    background: none;
-    border: 1px solid #e30613;
+
+.btn-delete-comment-dashboard {
+    background: transparent;
+    border: 1.5px solid #e30613;
     border-radius: 8px;
     padding: 8px 16px;
     color: #e30613;
     font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-left: 16px;
+    gap: 8px;
     white-space: nowrap;
+    font-family: inherit;
 }
 
-.btn-remove-saved:hover {
+.btn-delete-comment-dashboard:hover {
     background: #e30613;
     color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(227, 6, 19, 0.2);
 }
+
+.btn-delete-comment-dashboard:active {
+    transform: scale(0.96);
+}
+
+.btn-delete-comment-dashboard i {
+    font-size: 13px;
+}
+
+.btn-delete-comment-dashboard:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-delete-comment-dashboard:disabled:hover {
+    background: transparent;
+    color: #e30613;
+    box-shadow: none;
+}
+
 
 .comments-list-dashboard {
     display: flex;
@@ -706,24 +801,13 @@ Dashboard
     gap: 5px;
 }
 
-.btn-delete-comment-dashboard {
-    background: none;
-    border: 1px solid #e30613;
-    border-radius: 8px;
-    padding: 8px 16px;
-    color: #e30613;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
 
-.btn-delete-comment-dashboard:hover {
-    background: #e30613;
-    color: white;
+.tab-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 
@@ -735,6 +819,25 @@ Dashboard
     
     .btn-delete-comment-dashboard {
         align-self: flex-end;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .saved-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .saved-item .btn-delete-comment-dashboard {
+        align-self: flex-end;
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .tab-header-content {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
@@ -771,117 +874,300 @@ Dashboard
         });
     });
 
-
-
-
-
- function removeFromSaved(newsId) {
-    fetch(`/news/${newsId}/unsave`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const item = document.getElementById(`saved-item-${newsId}`);
-            if (item) {
-                item.remove();
-            }
-           
-            const countSpan = document.querySelector('#tab-saved .tab-header p');
-            if (countSpan) {
-                const match = countSpan.textContent.match(/\d+/);
-                if (match) {
-                    const currentCount = parseInt(match[0]);
-                    const newCount = currentCount - 1;
-                    countSpan.textContent = `Total saved: ${newCount}`;
-                }
-            }
-            
-            const remainingItems = document.querySelectorAll('#tab-saved .saved-item');
-            if (remainingItems.length === 0) {
+    function uploadAvatar(input) {
+        if (!input.files || !input.files[0]) return;
+        
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append('avatar', file);
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+        
+        const btn = input.previousElementSibling;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        
+        fetch('/profile/avatar', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
                 location.reload();
+            } else {
+                alert(data.message || 'Error uploading avatar');
+                btn.innerHTML = '<i class="fa-solid fa-camera"></i>';
+                btn.disabled = false;
             }
-            
-            showToast('Article deleted', 'success');
-        } else {
-            showToast('Error deleting', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('An error occurred', 'error');
-    });
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-        <span>${message}</span>
-    `;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.remove();
-    }, 2000);
-}
-
-function deleteDashboardComment(commentId) {
-    if (!confirm('Are you sure you want to delete this comment?')) {
-        return;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error uploading avatar');
+            btn.innerHTML = '<i class="fa-solid fa-camera"></i>';
+            btn.disabled = false;
+        });
     }
-    
-    fetch(`/comments/${commentId}`, { 
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+
+    function removeFromSaved(newsId, button) {
+        if (!confirm('Are you sure you want to delete this saved article?')) {
+            return;
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const item = document.getElementById(`dashboard-comment-${commentId}`);
-            if (item) {
-                item.style.transition = 'all 0.3s ease';
-                item.style.opacity = '0';
-                item.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    item.remove();
-                    
-                
-                    const countSpan = document.querySelector('#tab-comments .tab-header p');
-                    if (countSpan) {
-                        const match = countSpan.textContent.match(/\d+/);
-                        if (match) {
-                            const currentCount = parseInt(match[0]);
-                            const newCount = currentCount - 1;
-                            countSpan.textContent = `Total comments: ${newCount}`;
-                        }
-                    }
-                    
-            
-                    const remainingItems = document.querySelectorAll('#tab-comments .comment-item-dashboard');
-                    if (remainingItems.length === 0) {
-                        location.reload();
-                    }
-                }, 200);
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+        
+        fetch(`/news/${newsId}/unsave`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             }
-            showToast('Comment deleted', 'success');
-        } else {
-            showToast(data.message || 'Error deleting', 'error');
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const item = document.getElementById(`saved-item-${newsId}`);
+                if (item) {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        item.remove();
+                        
+                        const countSpan = document.querySelector('#tab-saved .tab-header p');
+                        if (countSpan) {
+                            const match = countSpan.textContent.match(/\d+/);
+                            if (match) {
+                                const currentCount = parseInt(match[0]);
+                                const newCount = currentCount - 1;
+                                countSpan.textContent = `Total saved: ${newCount}`;
+                            }
+                        }
+                        
+                        const remainingItems = document.querySelectorAll('#tab-saved .saved-item');
+                        if (remainingItems.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                }
+                showToast('Article deleted successfully', 'success');
+            } else {
+                showToast(data.message || 'Error deleting', 'error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Delete';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Delete';
+        });
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 2000);
+    }
+
+    function deleteDashboardComment(commentId, button) {
+        if (!confirm('Are you sure you want to delete this comment?')) {
+            return;
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('An error occurred', 'error');
-    });
-}
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+        
+        fetch(`/comments/${commentId}`, { 
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const item = document.getElementById(`dashboard-comment-${commentId}`);
+                if (item) {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        item.remove();
+                        
+                        const countSpan = document.querySelector('#tab-comments .tab-header p');
+                        if (countSpan) {
+                            const match = countSpan.textContent.match(/\d+/);
+                            if (match) {
+                                const currentCount = parseInt(match[0]);
+                                const newCount = currentCount - 1;
+                                countSpan.textContent = `Total comments: ${newCount}`;
+                            }
+                        }
+                        
+                        const remainingItems = document.querySelectorAll('#tab-comments .comment-item-dashboard');
+                        if (remainingItems.length === 0) {
+                            location.reload();
+                        }
+                    }, 200);
+                }
+                showToast('Comment deleted', 'success');
+            } else {
+                showToast(data.message || 'Error deleting', 'error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Delete';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Delete';
+        });
+    }
+
+    function clearHistory(button) {
+        if (!confirm('Are you sure you want to clear your entire viewing history? This action cannot be undone.')) {
+            return;
+        }
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Clearing...';
+        
+        fetch('{{ route("profile.history.clear") }}', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+             
+                const historyItems = document.querySelectorAll('.history-item');
+                const historyList = document.getElementById('history-list');
+                const historyCount = document.getElementById('history-count');
+                const clearBtn = document.getElementById('clear-history-btn');
+                
+          
+                historyItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.transition = 'all 0.2s ease';
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(20px)';
+                    }, index * 50);
+                });
+                
+            
+                setTimeout(() => {
+                    historyItems.forEach(item => item.remove());
+                    
+                    if (historyCount) {
+                        historyCount.textContent = 'Articles viewed: 0';
+                    }
+                    
+                    if (clearBtn) {
+                        clearBtn.style.display = 'none';
+                    }
+                    
+                    if (historyList) {
+                        const emptyState = document.createElement('div');
+                        emptyState.className = 'empty-state';
+                        emptyState.id = 'history-empty';
+                        emptyState.innerHTML = `
+                            <i class="fa-regular fa-clock"></i>
+                            <p>You haven't viewed any articles yet</p>
+                            <a href="{{ route('news.index') }}" class="btn-empty">Start reading</a>
+                        `;
+                        historyList.appendChild(emptyState);
+                    }
+                    
+                    showToast('History cleared successfully', 'success');
+                }, historyItems.length * 50 + 200);
+                
+            } else {
+                showToast(data.message || 'Error clearing history', 'error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Clear history';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-regular fa-trash-alt"></i> Clear history';
+        });
+    }
+
+    function unlikeNews(newsId, button) {
+        if (!confirm('Are you sure you want to remove your like from this article?')) {
+            return;
+        }
+        
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Removing...';
+        
+        fetch(`/news/${newsId}/like`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const item = document.getElementById(`liked-item-${newsId}`);
+                if (item) {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        item.remove();
+                        
+                        const countSpan = document.querySelector('#tab-liked .tab-header p');
+                        if (countSpan) {
+                            const match = countSpan.textContent.match(/\d+/);
+                            if (match) {
+                                const currentCount = parseInt(match[0]);
+                                const newCount = currentCount - 1;
+                                countSpan.textContent = `Total liked: ${newCount}`;
+                            }
+                        }
+                        
+                        const remainingItems = document.querySelectorAll('#tab-liked .saved-item');
+                        if (remainingItems.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                }
+                showToast('Like removed successfully', 'success');
+            } else {
+                showToast(data.message || 'Error removing like', 'error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-regular fa-heart"></i> Unlike';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred', 'error');
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-regular fa-heart"></i> Unlike';
+        });
+    }
 </script>
 @endsection

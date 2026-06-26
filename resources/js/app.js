@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const searchWrapper = document.getElementById('searchWrapper');
     const searchInput = document.getElementById('searchInput');
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
         searchWrapper.classList.remove('active');
         searchBtn.setAttribute('type', 'submit');
     } else {
-       
         searchBtn.setAttribute('type', 'button');
         searchBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -43,71 +41,69 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-window.addEventListener('resize', function() {
-  
-    location.reload();
-});
-
-
 const input = document.getElementById('searchInput');
 const results = document.getElementById('searchResults');
 
-input.addEventListener('keyup', async function() {
-    const query = this.value.trim();
-    if (query.length < 2) {
-        results.style.display = 'none';
-        return;
-    }
-    try {
-        const response = await fetch(`/search/live?q=${encodeURIComponent(query)}`);
-        const news = await response.json();
-        results.innerHTML = '';
-        if (news.length === 0) {
+if (input && results) {
+    input.addEventListener('keyup', async function() {
+        const query = this.value.trim();
+        if (query.length < 2) {
             results.style.display = 'none';
             return;
         }
-        news.forEach(item => {
-            results.innerHTML += `
-                <a href="/news/${item.id}" class="search-item">
-                    ${item.title}
-                </a>
-            `;
-        });
-        results.style.display = 'block';
-    } catch(error) {
-        console.error(error);
-    }
-});
+        try {
+            const response = await fetch(`/search/live?q=${encodeURIComponent(query)}`);
+            const news = await response.json();
+            results.innerHTML = '';
+            if (news.length === 0) {
+                results.style.display = 'none';
+                return;
+            }
+            news.forEach(item => {
+                results.innerHTML += `
+                    <a href="/news/${item.id}" class="search-item">
+                        ${item.title}
+                    </a>
+                `;
+            });
+            results.style.display = 'block';
+        } catch(error) {
+            console.error(error);
+        }
+    });
+}
 
 
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.filter-btn');
     const cards = document.querySelectorAll('.popular-card');
 
-    function filterPosts(category) {
-        let shown = 0;
-        cards.forEach(card => {
-            const cardCategory = card.dataset.category;
-            const match = category === 'all' || cardCategory === category;
-            if (match && shown < 4) {
-                card.style.display = '';
-                shown++;
-            } else {
-                card.style.display = 'none';
-            }
+    if (buttons.length && cards.length) {
+        function filterPosts(category) {
+            let shown = 0;
+            cards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                const match = category === 'all' || cardCategory === category;
+                if (match && shown < 4) {
+                    card.style.display = '';
+                    shown++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                filterPosts(button.dataset.category);
+            });
         });
+
+        filterPosts('all');
     }
-
-    buttons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            buttons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            filterPosts(button.dataset.category);
-        });
-    });
-
-    filterPosts('all');
 });
 
 
@@ -180,4 +176,95 @@ function deleteComment(commentId) {
             }
         });
     }
+}
+
+
+function editComment(commentId) {
+    const commentText = document.getElementById(`comment-text-${commentId}`);
+    const editForm = document.getElementById(`edit-form-${commentId}`);
+    const commentActions = document.querySelector(`#comment-${commentId} .comment-actions`);
+
+    commentText.style.display = 'none';
+    editForm.style.display = 'block';
+    commentActions.style.display = 'none';
+}
+
+function cancelEdit(commentId) {
+    const commentText = document.getElementById(`comment-text-${commentId}`);
+    const editForm = document.getElementById(`edit-form-${commentId}`);
+    const commentActions = document.querySelector(`#comment-${commentId} .comment-actions`);
+
+    commentText.style.display = 'block';
+    editForm.style.display = 'none';
+    commentActions.style.display = 'flex';
+}
+
+function saveEdit(commentId) {
+    const newContent = document.getElementById(`edit-text-${commentId}`).value;
+
+    if (!newContent.trim()) {
+        showToast('Comment cannot be empty.', 'error');
+        return;
+    }
+
+    fetch(`/comments/${commentId}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: newContent })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`comment-text-${commentId}`).textContent = newContent;
+            cancelEdit(commentId);
+            showToast('Comment updated', 'success');
+        } else {
+            showToast(data.message || 'Update error', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error updating comment', 'error');
+    });
+}
+
+function submitComment() {
+    const content = document.getElementById('comment-content');
+    if (!content.value.trim()) {
+        showToast('Please write a comment.', 'error');
+        return;
+    }
+
+    const newsId = document.querySelector('meta[name="news-id"]')?.content;
+    if (!newsId) {
+        showToast('Error: news not found.', 'error');
+        return;
+    }
+
+    fetch('/comments', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            news_id: newsId,
+            content: content.value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            showToast(data.message || 'Error posting comment.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error posting comment.', 'error');
+    });
 }

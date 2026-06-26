@@ -18,7 +18,7 @@ services:
     networks:
       - app-network
 
-  
+
   app:
     build:
       context: .
@@ -26,7 +26,7 @@ services:
     container_name: news_portal_app
     restart: unless-stopped
     ports:
-      - "8082:80"
+      - "127.0.0.1:8080:80"
     volumes:
       - ./:/var/www/html
       - ./docker/php.ini:/usr/local/etc/php/conf.d/custom.ini
@@ -45,7 +45,7 @@ services:
       PMA_PORT: 3306
       UPLOAD_LIMIT: 100M
     ports:
-      - "8081:80"
+      - "8082:80"
     depends_on:
       - mysql
     networks:

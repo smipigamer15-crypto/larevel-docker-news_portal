@@ -1,0 +1,825 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "News API",
+        "description": "API для керування новинами",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8082/api",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/admin/users": {
+            "get": {
+                "summary": "Список користувачів",
+                "operationId": "2a04f4bb4444a2a498cd05658e60cffa",
+                "responses": {
+                    "200": {
+                        "description": "Список користувачів"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/users/{id}/role": {
+            "post": {
+                "summary": "Змінити роль користувача",
+                "operationId": "251329f59d80da7abe1298a1965609a3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role"
+                                ],
+                                "properties": {
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "admin",
+                                            "helper",
+                                            "reader"
+                                        ],
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Роль оновлено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/settings": {
+            "get": {
+                "summary": "Отримати налаштування",
+                "operationId": "654187ac3fdae3a313708749481c1676",
+                "responses": {
+                    "200": {
+                        "description": "Налаштування"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Оновити налаштування",
+                "operationId": "195edd9635d772a8e3b0b39338d909e7",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "site_name": {
+                                        "type": "string",
+                                        "example": "News Portal"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Налаштування оновлено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/contacts": {
+            "get": {
+                "summary": "Список повідомлень",
+                "operationId": "d2483bb379be3c4e2a9b38ea18ea3db9",
+                "responses": {
+                    "200": {
+                        "description": "Список повідомлень"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/contacts/{id}": {
+            "get": {
+                "summary": "Деталі повідомлення",
+                "operationId": "75a2da09ed87e9a17c8ed4c38417924f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Деталі повідомлення"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/contacts/{id}/status": {
+            "patch": {
+                "summary": "Оновити статус повідомлення",
+                "operationId": "bdb937eb935044210d59abcafd88dd24",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "new",
+                                            "read",
+                                            "replied"
+                                        ],
+                                        "example": "read"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Статус оновлено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/contacts/{id}/mark-read": {
+            "patch": {
+                "summary": "Позначити прочитаним",
+                "operationId": "d649710277f7739346a730957680b782",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Позначено прочитаним"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/stats": {
+            "get": {
+                "summary": "Статистика",
+                "operationId": "aea495bb05f23b43c987e8b21380cc66",
+                "responses": {
+                    "200": {
+                        "description": "Статистика сайту"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/categories": {
+            "get": {
+                "summary": "Отримати всі категорії",
+                "operationId": "b1b247b2b491b0491c3c728dc33f23f0",
+                "responses": {
+                    "200": {
+                        "description": "Список категорій"
+                    }
+                }
+            }
+        },
+        "/comments": {
+            "post": {
+                "summary": "Додати коментар",
+                "operationId": "478e0f4964ebbe8d3a22df34f4fcddab",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "news_id",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "news_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Гарна новина!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Коментар додано"
+                    },
+                    "422": {
+                        "description": "Помилка валідації"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comments/{id}": {
+            "put": {
+                "summary": "Оновити коментар",
+                "operationId": "0904942451844b2582af15f7c38988b4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Оновлений коментар"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Коментар оновлено"
+                    },
+                    "404": {
+                        "description": "Коментар не знайдено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Видалити коментар",
+                "operationId": "dc71fcedd4e6d8fe9a74a965257cc90b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Коментар видалено"
+                    },
+                    "404": {
+                        "description": "Коментар не знайдено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/my-comments": {
+            "get": {
+                "summary": "Мої коментарі",
+                "operationId": "eaef051645d734e86e47d6c55a523ef5",
+                "responses": {
+                    "200": {
+                        "description": "Список коментарів"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/news": {
+            "get": {
+                "summary": "Get all news",
+                "operationId": "b83ff020eb45141b07c365e50a4b27bd",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create news",
+                "operationId": "2a3cd008a3f69680a72ab654c7ad67ab",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "category"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "New news"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "News content"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Politics"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/news/{id}": {
+            "get": {
+                "summary": "Get one news",
+                "operationId": "808279e21907d41ede90b13d10882e40",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update news",
+                "operationId": "425fd8e7cd5ceb59100edb7d57fa72b6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Updated news"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Updated content"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "World"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete news",
+                "operationId": "9aa64a7959e1011d5cd8c10eb33acb7f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/news/category/{category}": {
+            "get": {
+                "summary": "News by category",
+                "operationId": "5e3bd38d2847f3708d4e7ea61294b6dc",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/news/{newsId}/comments": {
+            "get": {
+                "summary": "Get comments",
+                "operationId": "f1edcadec630c35bb63c8b9a1d867e41",
+                "parameters": [
+                    {
+                        "name": "newsId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/news/{id}/save": {
+            "post": {
+                "summary": "Save news",
+                "operationId": "a51034ad226bc6b2a98196bf0d73e6a2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Saved"
+                    }
+                }
+            }
+        },
+        "/saved": {
+            "get": {
+                "summary": "Get saved news",
+                "operationId": "676b6c173cff50936d1cfdab9b80a423",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "summary": "Отримати профіль",
+                "operationId": "c6a79007a56511faa6f48397a2d15867",
+                "responses": {
+                    "200": {
+                        "description": "Дані користувача"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "summary": "Оновити профіль",
+                "operationId": "74599296b1816be41ad4228975229966",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Name"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "new@email.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Профіль оновлено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Видалити акаунт",
+                "operationId": "146e3d0726049246ab0e167e0e7ad1bb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Акаунт видалено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profile/avatar": {
+            "post": {
+                "summary": "Оновити аватар",
+                "operationId": "fd54c82c040d44a02c94a38b5eafa899",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "avatar"
+                                ],
+                                "properties": {
+                                    "avatar": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Аватар оновлено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/history": {
+            "get": {
+                "summary": "Історія переглядів",
+                "operationId": "bbef1e618e15f097bf74c48446f72242",
+                "responses": {
+                    "200": {
+                        "description": "Список переглядів"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/history/clear": {
+            "delete": {
+                "summary": "Очистити історію",
+                "operationId": "981b9847de6d065b2dd396a0786e5f85",
+                "responses": {
+                    "200": {
+                        "description": "Історію очищено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/search": {
+            "get": {
+                "summary": "Пошук новин",
+                "operationId": "815f3b193b5fc1fc74d97b07fb9fbe5b",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "news"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Результати пошуку"
+                    }
+                }
+            }
+        },
+        "/search/live": {
+            "get": {
+                "summary": "Live пошук (автодоповнення)",
+                "operationId": "df680e7936bc1f10f340bb31d6b50962",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "news"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Результати автодоповнення"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

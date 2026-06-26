@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -22,6 +23,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar', 
+        'refresh_token',
+        'role', 
     ];
 
     /**
@@ -53,7 +57,8 @@ class User extends Authenticatable
                     ->withPivot('viewed_at')
                     ->withTimestamps();
     }
-     public function savedNews()
+    
+    public function savedNews()
     {
         return $this->belongsToMany(News::class, 'saved_news')
                     ->withTimestamps();
@@ -61,6 +66,45 @@ class User extends Authenticatable
 
     public function comments()
     {
-     return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+    }
+
+
+    public function likes()
+    {
+        return $this->belongsToMany(News::class, 'likes')->withTimestamps();
+    }
+
+
+    public function hasLiked($newsId)
+    {
+        return $this->likes()->where('news_id', $newsId)->exists();
+    }
+
+    public function generateTokens()
+    {
+        $accessToken = $this->createToken('access_token')->plainTextToken;
+        $refreshToken = Str::random(60);
+        
+        $this->refresh_token = $refreshToken;
+        $this->save();
+        
+        return [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'token_type' => 'Bearer',
+            'expires_in' => 60 * 15, 
+        ];
+    }
+
+    public function refreshAccessToken()
+    {
+        $accessToken = $this->createToken('access_token')->plainTextToken;
+        
+        return [
+            'access_token' => $accessToken,
+            'token_type' => 'Bearer',
+            'expires_in' => 60 * 15,
+        ];
     }
 }

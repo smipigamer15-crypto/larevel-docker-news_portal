@@ -40,184 +40,193 @@
             <a href="{{ route('home') }}">NEWS</a>
         </div>
 
-
-
-    <button class="menu-toggle" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-    </button>
-
+        <button class="menu-toggle" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
 
         <ul class="nav-menu">
-
-    <li>
-        <a href="{{ route('home') }}"
-           class="{{ request()->routeIs('home') ? 'active' : '' }}">
-            Home
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ route('news.index') }}"
-           class="{{ request()->routeIs('news.index') ? 'active' : '' }}">
-            News
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ route('news.category', 'Politics') }}"
-           class="{{ request()->is('category/Politics') ? 'active' : '' }}">
-            Politics
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ route('news.category', 'World') }}"
-           class="{{ request()->is('category/World') ? 'active' : '' }}">
-            World
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ route('news.category', 'Sports') }}"
-           class="{{ request()->is('category/Sports') ? 'active' : '' }}">
-            Sports
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ route('news.category', 'Culture') }}"
-           class="{{ request()->is('category/Culture') ? 'active' : '' }}">
-            Culture
-        </a>
-    </li>
-
-    <li>
-
-        @auth
-            @if(auth()->user()->hasAnyRole(['admin','helper']))
-                <a href="{{ route('admin.dashboard') }}" class="admin-link" target="_blank">
-                    Admin
+            <li>
+                <a href="{{ route('home') }}"
+                   class="{{ request()->routeIs('home') ? 'active' : '' }}">
+                    Home
                 </a>
-            @endif
-        @endauth
-    </li>
+            </li>
 
+            <li>
+                <a href="{{ route('news.index') }}"
+                   class="{{ request()->routeIs('news.index') ? 'active' : '' }}">
+                    News
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'Politics') }}"
+                   class="{{ request()->is('category/Politics') ? 'active' : '' }}">
+                    Politics
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'World') }}"
+                   class="{{ request()->is('category/World') ? 'active' : '' }}">
+                    World
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'Sports') }}"
+                   class="{{ request()->is('category/Sports') ? 'active' : '' }}">
+                    Sports
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'Culture') }}"
+                   class="{{ request()->is('category/Culture') ? 'active' : '' }}">
+                    Culture
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'Technology') }}"
+                   class="{{ request()->is('category/Technology') ? 'active' : '' }}">
+                    Technology
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('news.category', 'Economy') }}"
+                   class="{{ request()->is('category/Economy') ? 'active' : '' }}">
+                    Economy
+                </a>
+            </li>
+
+            <li>
+                @auth
+                    @if(auth()->user()->hasAnyRole(['admin','helper']))
+                        <a href="{{ route('admin.dashboard') }}" class="admin-link" target="_blank">
+                            Admin
+                        </a>
+                    @endif
+                @endauth
+            </li>
         </ul>
 
-    <div class="header-actions">
+        <div class="header-actions">
+            <form action="{{ route('search.index') }}" method="GET" class="search-wrapper" id="searchWrapper">
+                <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search news..." autocomplete="off">
+                <div class="search-results" id="searchResults"></div>
+                <button type="button" class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
 
-  <form action="{{ route('search.index') }}" method="GET" class="search-wrapper" id="searchWrapper">
+            @auth
+                <a href="{{ route('dashboard') }}" class="login-btn">
+                    {{ Str::limit(auth()->user()->name, 8) }}
+                </a>
+            @endauth
 
-    <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search news..." autocomplete="off">
-
-    <div class="search-results" id="searchResults"></div>
-
-    <button type="button" class="search-btn" id="searchBtn">
-        <i class="fas fa-search"></i>
-    </button>
-
-</form>
-
-
-        @auth
-    <a href="{{ route('dashboard') }}" class="login-btn">
-        {{ auth()->user()->name }}
-    </a>
-        @endauth
-
-        @guest
-    <a href="{{ route('login') }}" class="login-btn">
-        <i class="fas fa-user"></i>
-        Login
-    </a>
-        @endguest
-
+            @guest
+                <a href="{{ route('login') }}" class="login-btn">
+                    <i class="fas fa-user"></i>
+                    Login
+                </a>
+            @endguest
         </div>
     </div>
 </nav>
 
 <div class="news-layout">
-
-
-@yield('content')
-@if(!isset($hideSidebar) || !$hideSidebar)
-    <aside class="sidebar">
-@php
-    $latestNews = \App\Models\News::latest()->take(4)->get();
-@endphp
-       <div class="sidebar-widget">
-    <h3>Latest news</h3>
-    @foreach($latestNews as $item)
-        <a href="{{ route('news.show', $item->id) }}" class="latest-item">
-            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
-            <div>
-                <h5>
-                    {{ Str::limit($item->title, 45) }}
-                </h5>
-                <span>
-                    {{ $item->created_at->format('d.m.Y H:i') }}
-                </span>
+    @yield('content')
+    
+    @if(!isset($hideSidebar) || !$hideSidebar)
+        <aside class="sidebar">
+            @php
+                $latestNews = \App\Models\News::latest()->take(4)->get();
+            @endphp
+            
+            <div class="sidebar-widget">
+                <h3>Latest news</h3>
+                @foreach($latestNews as $item)
+                    <a href="{{ route('news.show', $item->slug) }}" class="latest-item">
+                        <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
+                        <div>
+                            <h5>
+                                {{ Str::limit($item->title, 45) }}
+                            </h5>
+                            <span>
+                                {{ $item->created_at->format('d.m.Y H:i') }}
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
             </div>
-        </a>
 
-    @endforeach
+            <div class="sidebar-widget">
+                <h3>Categories</h3>
 
+                <ul class="category-list">
+                    <li>
+                        <a href="{{ route('news.category', 'Politics') }}" class="{{ request()->is('category/Politics') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-landmark"></i> Politics</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('news.category', 'World') }}" class="{{ request()->is('category/World') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-earth-europe"></i> World</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('news.category', 'Sports') }}" class="{{ request()->is('category/Sports') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-futbol"></i> Sports</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('news.category', 'Culture') }}" class="{{ request()->is('category/Culture') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-masks-theater"></i> Culture</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('news.category', 'Technology') }}" class="{{ request()->is('category/Technology') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-microchip"></i> Technology</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('news.category', 'Economy') }}" class="{{ request()->is('category/Economy') ? 'active' : '' }}">
+                            <span><i class="fa-solid fa-chart-line"></i> Economy</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    @endif
 </div>
-
-        <div class="sidebar-widget">
-    <h3>Categories</h3>
-
-    <ul class="category-list">
-        <li>
-            <a href="{{ route('news.category', 'Politics') }}">
-                <span><i class="fa-solid fa-landmark"></i> Politics</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ route('news.category', 'World') }}">
-                <span><i class="fa-solid fa-earth-europe"></i> World</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ route('news.category', 'Sports') }}">
-                <span><i class="fa-solid fa-futbol"></i> Sports</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ route('news.category', 'Culture') }}">
-                <span><i class="fa-solid fa-masks-theater"></i> Culture</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </li>
-    </ul>
-</div>
-    </aside>
-@endif
-
-</div>
-
-
 
 <footer class="footer">
     <div class="footer-container">
-
         <div class="footer-col">
             <h4>NEWS</h4>
             <p class="footer-desc">
-              We cover the most important events in Ukraine and the world, providing prompt, reliable and up-to-date information. Our goal is to help readers stay informed about major news, social changes, economic processes, political decisions, and events that affect the lives of the country and every citizen.
+                We cover the most important events in Ukraine and the world, providing prompt, reliable and up-to-date information. Our goal is to help readers stay informed about major news, social changes, economic processes, political decisions, and events that affect the lives of the country and every citizen.
             </p>
 
             <div class="socials">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
 
@@ -230,6 +239,8 @@
                 <li><a href="{{ route('news.category', 'World') }}">World</a></li>
                 <li><a href="{{ route('news.category', 'Sports') }}">Sports</a></li>
                 <li><a href="{{ route('news.category', 'Culture') }}">Culture</a></li>
+                <li><a href="{{ route('news.category', 'Technology') }}">Technology</a></li>
+                <li><a href="{{ route('news.category', 'Economy') }}">Economy</a></li>
             </ul>
         </div>
 
@@ -237,12 +248,11 @@
             <h4>Information</h4>
             <ul>
                 <li><a href="{{ route('about') }}">About us</a></li>
-                <li> <a href="{{ route('contact') }}">Contacts</a></li>
+                <li><a href="{{ route('contact') }}">Contacts</a></li>
                 <li><a href="#">Privacy policy</a></li>
                 <li><a href="#">Cookie</a></li>
             </ul>
         </div>
-
     </div>
 
     <div class="footer-bottom">
@@ -250,7 +260,6 @@
         <p>Created in Ukraine 🇺🇦</p>
     </div>
 </footer>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>

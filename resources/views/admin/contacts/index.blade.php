@@ -1,6 +1,156 @@
 @extends('layouts.admin')
 
 @section('content')
+
+<style>
+.contacts-table-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.contacts-table {
+    margin: 0 !important;
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.contacts-table th,
+.contacts-table td {
+    padding: 12px 14px !important;
+    vertical-align: middle !important;
+}
+
+.contacts-table th:first-child,
+.contacts-table td:first-child {
+    padding-left: 16px !important;
+}
+
+.contacts-table th:last-child,
+.contacts-table td:last-child {
+    padding-right: 16px !important;
+}
+
+.contacts-table .user-info-cell {
+    padding-right: 20px !important;
+}
+
+.contacts-table .subject-cell {
+    padding-right: 20px !important;
+}
+
+.contacts-table .category-cell {
+    padding-right: 16px !important;
+}
+
+.contacts-table .status-cell {
+    padding-right: 16px !important;
+}
+
+.contacts-table .date-cell {
+    padding-right: 16px !important;
+}
+
+.contacts-table .actions-cell {
+    padding-left: 8px !important;
+    padding-right: 12px !important;
+}
+
+.contacts-admin {
+    padding: 16px 20px !important;
+}
+
+.dashboard-card {
+    padding: 16px 20px !important;
+}
+
+.table th, 
+.table td {
+    padding: 12px 14px !important;
+}
+
+@media (max-width: 768px) {
+    .contacts-table th,
+    .contacts-table td {
+        padding: 8px 10px !important;
+    }
+    
+    .contacts-table th:first-child,
+    .contacts-table td:first-child {
+        padding-left: 10px !important;
+    }
+    
+    .contacts-table th:last-child,
+    .contacts-table td:last-child {
+        padding-right: 10px !important;
+    }
+    
+    .contacts-admin {
+        padding: 10px 12px !important;
+    }
+    
+    .dashboard-card {
+        padding: 10px 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .contacts-table th,
+    .contacts-table td {
+        padding: 6px 8px !important;
+    }
+    
+    .contacts-table th:first-child,
+    .contacts-table td:first-child {
+        padding-left: 6px !important;
+    }
+    
+    .contacts-table th:last-child,
+    .contacts-table td:last-child {
+        padding-right: 6px !important;
+    }
+}
+
+/* ===== АВАТАР В ПОВІДОМЛЕННЯХ ===== */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.user-info img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #71717a;
+}
+</style>
+
 <div class="contacts-admin">
     
     <div class="contacts-header">
@@ -51,9 +201,14 @@
                     <td><strong>#{{ $contact->id }}</strong></td>
                     <td class="user-info-cell">
                         <div class="user-info">
-                            <div class="user-avatar">
-                                {{ strtoupper(substr($contact->user->name, 0, 1)) }}
-                            </div>
+                            @if($contact->user->avatar)
+                                <img src="{{ asset('storage/'.$contact->user->avatar) }}" 
+                                     alt="{{ $contact->user->name }}">
+                            @else
+                                <div class="user-avatar">
+                                    {{ strtoupper(substr($contact->user->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <div class="user-name">{{ $contact->user->name }}</div>
                                 <div class="user-email">{{ $contact->user->email }}</div>
@@ -166,7 +321,6 @@ function markAsRead(id, button) {
     });
 }
 
-
 function showMessageDetails(row) {
     const data = {
         id: row.dataset.id,
@@ -219,11 +373,6 @@ function showMessageDetails(row) {
             <div class="detail-card">${escapeHtml(data.created_at)}</div>
         </div>
         
-        <form method="POST" action="/admin/contacts/${data.id}/status" class="status-form" onsubmit="return updateStatus(event, ${data.id})">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="_method" value="PATCH"> 
-        </form>
-        
         <div class="modal-actions">
             <a href="mailto:${escapeHtml(data.user_email)}" class="btn-reply-email">
                 <i class="fa-solid fa-reply"></i> Reply by email
@@ -232,32 +381,6 @@ function showMessageDetails(row) {
     `;
     
     modal.classList.add('active');
-}
-
-function updateStatus(event, id) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    
-    fetch(`/admin/contacts/${id}/status`, {
-        method: 'PATCH',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast('Status updated');
-            setTimeout(() => location.reload(), 1000);
-        }
-    })
-    .catch(error => {
-        showToast('Error updating status', 'error');
-    });
-    
-    return false;
 }
 
 function escapeHtml(text) {
@@ -310,4 +433,5 @@ window.onclick = function(event) {
     }
 }
 </script>
+
 @endsection

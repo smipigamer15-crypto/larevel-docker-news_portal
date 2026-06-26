@@ -29,6 +29,10 @@ class DashboardController extends Controller
             $savedArticles = $saved->count();
         }
         
+    
+        $likedNews = $user->likes()->latest()->get();
+        $likedCount = $likedNews->count();
+        
         return view('dashboard', [
             'myComments' => $comments->count(),
             'savedArticles' => $savedArticles,
@@ -36,6 +40,25 @@ class DashboardController extends Controller
             'comments' => $comments,
             'saved' => $saved,
             'history' => $history,
+            'likedNews' => $likedNews,
+            'likedCount' => $likedCount,
         ]);
+    }
+    
+    public function clearHistory()
+    {
+        try {
+            auth()->user()->viewedNews()->detach();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'History cleared successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error clearing history: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

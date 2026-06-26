@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class ProfileController extends Controller
@@ -33,6 +34,26 @@ class ProfileController extends Controller
         return redirect()->route('dashboard')->with('success', 'Profile successfully updated!');
     }
     
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ]);
+        
+        $user = Auth::user();
+        
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+        
+        $path = $request->file('avatar')->store('avatars', 'public');
+        $user->avatar = $path;
+        $user->save();
+        
+        return response()->json(['success' => true]);
+    }
+    
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -58,5 +79,12 @@ class ProfileController extends Controller
         $user->delete();
         
         return redirect('/');
+    }
+    
+    public function clearHistory()
+    {
+        Auth::user()->viewedNews()->detach();
+        
+        return response()->json(['success' => true]);
     }
 }

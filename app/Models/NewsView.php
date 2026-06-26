@@ -6,14 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewsView extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
+        'user_id',
         'news_id',
-        'view_date',
-        'views'
+        'viewed_at'
+    ];
+
+    protected $casts = [
+        'viewed_at' => 'datetime',
     ];
 
     public function news()
     {
         return $this->belongsTo(News::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

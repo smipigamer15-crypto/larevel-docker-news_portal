@@ -24,7 +24,7 @@ About
             </a>
         </div>
     </div>
-</div>
+    </div>
 
     <div class="about-block mission-block">
         <div class="block-icon">
