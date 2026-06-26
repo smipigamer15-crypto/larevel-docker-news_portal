@@ -9,15 +9,15 @@
 ## ✨ Features
 
 ### 🔐 Authentication & Authorization
--  User registration and login system
--  Role-based access control
--  Multiple user roles (User, Helper, Admin)
+-  User registration and login system with JWT (Access + Refresh tokens)
+-  Role-based access control (User, Helper, Admin)
 -  Secure admin dashboard for authorized users
+-  Profile management with avatar upload
 
 ### 📝 News Management
 -  Create, edit, and delete news articles
 -  Assign categories to news posts
--  Automatic redirection to the news page after publishing
+-  SEO-friendly URLs with Slug instead of ID
 -  Organized content structure with categories
 
 ### 👥 User Features
@@ -26,15 +26,17 @@
 -  Personal profile with saved posts
 -  View personal comment history
 -  Track recently viewed news articles
+-  Like/unlike articles with real-time updates
 
-### 🔍 Search
--  Real-time live search
--  Instant suggestions while typing
--  Quick access to related news articles
+### 🔍 Search & Navigation
+-  Real-time live search with instant suggestions
+-  Category filtering
+-  Responsive navigation with fixed username overflow
 
 ### 📊 Analytics
--  News view tracking system
+-  Unique news view tracking (one view per user)
 -  Article popularity statistics
+-  Likes tracking with admin dashboard integration
 -  User activity monitoring
 
 ### 📬 Contact System
@@ -53,7 +55,7 @@ Users with Admin and Helper roles have access to the Admin button in the navigat
 -  Total Users
 -  Total Comments
 -  News Views Statistics (Last 7 Days)
--  Latest News
+-  Latest News with likes and comments tracking
 
 ### 👥 User Management
 -  View all registered users
@@ -83,37 +85,63 @@ Users with Admin and Helper roles have access to the Admin button in the navigat
 
 | Category | Technologies |
 |----------|--------------|
-|  Backend | Laravel, PHP |
+|  Backend | Laravel, PHP, JWT |
 |  Database | MySQL |
 |  Frontend | JavaScript, Bootstrap / Tailwind CSS |
+|  API Documentation | Swagger / OpenAPI |
 |  Container | Docker & Docker Compose |
 
 ---
 
 ## 🚀 Key Features Summary
 
--  Authentication & Authorization
+-  Authentication & Authorization (JWT Access + Refresh tokens)
 -  Role-Based Access Control
--  News Management System
+-  News Management System with Slug URLs
 -  Categories Management
--  Comments System
--  Saved Posts
--  User Profiles
--  View History
+-  Comments System with Admin Moderation
+-  Saved Posts & Favorites
+-  User Profiles with Avatar Upload
+-  View History with Fast Clearing
 -  Live Search
 -  Contact Form
 -  Analytics Dashboard
 -  Admin Panel
 -  User Management
+-  Likes System
+-  API with Swagger Documentation
+-  Unique View Tracking
+
+---
+
+## 📦 Recent Updates
+
+### 🆕 New Features
+- **API Implementation** - RESTful API with Swagger/OpenAPI documentation
+- **JWT Authentication** - Access + Refresh tokens for secure API access
+- **Like System** - Real-time likes with counter updates
+- **Slug URLs** - SEO-friendly URLs instead of numeric IDs
+- **Avatar Upload** - Profile picture management
+- **Unique View Tracking** - Each user views an article only once
+
+### 🎨 UI/UX Improvements
+- **Admin Comment Moderation** - Administrators can edit and delete any user's comments
+- **Username Overflow Fix** - Long usernames no longer overlap the search button
+- **Consistent Buttons** - Delete history button now matches comment and save button styles
+- **Faster History Clearing** - Optimized history deletion performance
+- **Text Overflow Fix** - Long text content no longer breaks layout boundaries
 
 ---
 
 ## 🏃 How to Run Locally
-- Clone the repository  
-  `git clone https://github.com/your-username/your-repo-name.git`
 
-- Navigate into project folder  
-  `cd your-repo-name`
+### Prerequisites
+- Docker & Docker Compose
+- Git
 
-- Launch using Docker  
-  `docker-compose up -d --build`
+### Installation
+
+Clone the repository and navigate to the project folder:
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
