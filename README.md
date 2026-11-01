@@ -4,13 +4,28 @@
 
 Here is a quick look at the application:
 
-| Home Page | News Article |
-| :---: | :---: |
-| ![Home Page](https://github.com/user-attachments/assets/83ae9018-2159-4002-81a6-6cec399201c4) | ![News Article](https://github.com/user-attachments/assets/ae838f4e-c310-4576-8d4e-1b8672003527) |
-
-| Admin Dashboard | Mobile Version |
-| :---: | :---: |
-| ![Admin Dashboard](https://github.com/user-attachments/assets/52a6845f-2afc-465e-9dd8-c22dbcd7d9b7) | ![Mobile Version](https://github.com/user-attachments/assets/711ab21c-927c-4090-8419-66456d5933ce) |
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <b>Home Page</b><br>
+      <img src="https://github.com/user-attachments/assets/83ae9018-2159-4002-81a6-6cec399201c4" width="100%" style="border-radius: 8px;" alt="Home Page">
+    </td>
+    <td align="center" width="50%">
+      <b>News Article</b><br>
+      <img src="https://github.com/user-attachments/assets/ae838f4e-c310-4576-8d4e-1b8672003527" width="100%" style="border-radius: 8px;" alt="News Article">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <b>Admin Dashboard</b><br>
+      <img src="https://github.com/user-attachments/assets/52a6845f-2afc-465e-9dd8-c22dbcd7d9b7" width="100%" style="border-radius: 8px;" alt="Admin Dashboard">
+    </td>
+    <td align="center" width="50%">
+      <b>Mobile Version</b><br>
+      <img src="https://github.com/user-attachments/assets/711ab21c-927c-4090-8419-66456d5933ce" width="100%" style="border-radius: 8px;" alt="Mobile Version">
+    </td>
+  </tr>
+</table>
 
 ---
 
