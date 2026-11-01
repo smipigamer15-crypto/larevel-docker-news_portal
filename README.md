@@ -1,8 +1,16 @@
 # 📰 News Portal
 
-![News Portal](screenshots/news.avif)
+## 📸 Screenshots
 
-> A modern news management platform built with Laravel that provides powerful content management tools, user interaction features, and a comprehensive administration panel.
+Here is a quick look at the application:
+
+| Home Page | News Article |
+| :---: | :---: |
+| ![Home Page](https://github.com/user-attachments/assets/83ae9018-2159-4002-81a6-6cec399201c4) | ![News Article](https://github.com/user-attachments/assets/ae838f4e-c310-4576-8d4e-1b8672003527) |
+
+| Admin Dashboard | Mobile Version |
+| :---: | :---: |
+| ![Admin Dashboard](https://github.com/user-attachments/assets/52a6845f-2afc-465e-9dd8-c22dbcd7d9b7) | ![Mobile Version](https://github.com/user-attachments/assets/711ab21c-927c-4090-8419-66456d5933ce) |
 
 ---
 
