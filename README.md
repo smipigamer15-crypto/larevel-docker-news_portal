@@ -182,15 +182,15 @@ npm run dev
 
 Open the Website
 ```bash
-**http://localhost:8080**
+http://localhost:8080
 ```
 
 ### 🐳 Useful Docker Commands
 
 | Command |	Description |
 | ------- | ----------- |
-| docker compose up -d | Start containers | 
-| docker compose down | Stop containers | 
+| ```bash docker compose up -d ``` | Start containers | 
+| ```bash docker compose down ``` | Stop containers | 
 | docker compose ps	| Check container status |
 | docker compose logs -f | View application logs |
 | docker compose restart | Restart containers |
