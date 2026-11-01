@@ -74,41 +74,16 @@ Users with **Admin** and **Helper** roles have access to the Admin button in the
 
 ## 🚀 Key Features Summary
 
--  Authentication & Authorization (JWT Access + Refresh tokens)
--  Role-Based Access Control
--  News Management System with Slug URLs
--  Categories Management
--  Comments System with Admin Moderation
--  Saved Posts & Favorites
--  User Profiles with Avatar Upload
--  View History with Fast Clearing
--  Live Search
--  Contact Form
--  Analytics Dashboard
--  Admin Panel
--  User Management
--  Likes System
--  API with Swagger Documentation
--  Unique View Tracking
-
----
-
-## 📦 Recent Updates
-
-### 🆕 New Features
-- **API Implementation** - RESTful API with Swagger/OpenAPI documentation
-- **JWT Authentication** - Access + Refresh tokens for secure API access
-- **Like System** - Real-time likes with counter updates
-- **Slug URLs** - SEO-friendly URLs instead of numeric IDs
-- **Avatar Upload** - Profile picture management
-- **Unique View Tracking** - Each user views an article only once
-
-### 🎨 UI/UX Improvements
-- **Admin Comment Moderation** - Administrators can edit and delete any user's comments
-- **Username Overflow Fix** - Long usernames no longer overlap the search button
-- **Consistent Buttons** - Delete history button now matches comment and save button styles
-- **Faster History Clearing** - Optimized history deletion performance
-- **Text Overflow Fix** - Long text content no longer breaks layout boundaries
+- **Authentication & Authorization:** Secure API and Web auth via Laravel Sanctum
+- **Role-Based Access Control:** User, Helper, and Admin roles (Spatie)
+- **News & Categories:** News management with SEO-friendly Slug URLs and category filtering
+- **Comments & Moderation:** Full comment system with admin moderation capabilities
+- **User Profiles:** Avatar upload, saved posts, and fast-clearing view history
+- **Live Search:** Real-time search with instant suggestions
+- **Analytics Dashboard:** Unique view tracking, likes system, and popularity stats
+- **Admin Panel:** Full control over users, news, categories, messages, and settings
+- **Contact Form:** Direct messaging system for users
+- **API Documentation:** RESTful API documented via Swagger/OpenAPI
 
 ---
 
