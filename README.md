@@ -9,75 +9,52 @@
 ## ✨ Features
 
 ### 🔐 Authentication & Authorization
--  User registration and login system with JWT (Access + Refresh tokens)
--  Role-based access control (User, Helper, Admin)
--  Secure admin dashboard for authorized users
--  Profile management with avatar upload
+- User registration and login system with **Laravel Sanctum** (API Tokens)
+- Role-based access control (User, Helper, Admin) powered by Spatie
+- Secure admin dashboard for authorized users
+- Profile management with avatar upload
 
 ### 📝 News Management
--  Create, edit, and delete news articles
--  Assign categories to news posts
--  SEO-friendly URLs with Slug instead of ID
--  Organized content structure with categories
+- Create, edit, and delete news articles
+- Assign categories to news posts
+- SEO-friendly URLs using **Slugs** instead of IDs
+- Organized content structure with categories
 
 ### 👥 User Features
--  Add, edit, and delete comments
--  Save favorite news articles
--  Personal profile with saved posts
--  View personal comment history
--  Track recently viewed news articles
--  Like/unlike articles with real-time updates
+- Add, edit, and delete comments
+- Save favorite news articles
+- Personal profile with saved posts
+- View personal comment history
+- Track recently viewed news articles
+- Like/unlike articles with real-time updates
 
 ### 🔍 Search & Navigation
--  Real-time live search with instant suggestions
--  Category filtering
--  Responsive navigation with fixed username overflow
+- Real-time live search with instant suggestions
+- Category filtering
+- Responsive navigation with fixed username overflow (mobile-friendly)
 
 ### 📊 Analytics
--  Unique news view tracking (one view per user)
--  Article popularity statistics
--  Likes tracking with admin dashboard integration
--  User activity monitoring
+- Unique news view tracking (one view per user/session)
+- Article popularity statistics
+- Likes tracking with admin dashboard integration
+- User activity monitoring
 
 ### 📬 Contact System
--  Contact form for sending messages
--  Messages are available in the admin panel
+- Contact form for sending messages
+- Messages are available in the admin panel
 
 ---
 
-## 🛠️ Admin Panel
+## 🛠️ Admin Panel Overview
 
-Users with Admin and Helper roles have access to the Admin button in the navigation bar, which opens the administration panel.
+Users with **Admin** and **Helper** roles have access to the Admin button in the navigation bar, which opens the administration panel.
 
-### 📊 Dashboard Overview
--  Total Posts
--  Total Views
--  Total Users
--  Total Comments
--  News Views Statistics (Last 7 Days)
--  Latest News with likes and comments tracking
-
-### 👥 User Management
--  View all registered users
--  Display user names and email addresses
--  Manage user roles
-
-### 🏷️ Category Management
--  View all categories
--  Display the number of news articles in each category
--  Organize website content
-
-### 📝 News Management
--  Create news articles
--  Edit existing articles
--  Delete news posts
-
-### 📬 Messages
--  View messages submitted through the website contact form
-
-### ⚙️ Settings
--  Customize administration panel settings
--  Change the admin panel title
+- **📊 Dashboard:** Total Posts, Total Views, Total Users, Total Comments, News Views Statistics (Last 7 Days), Latest News tracking.
+- **👥 User Management:** View all registered users, display names and emails, manage user roles.
+- **🏷️ Category Management:** View all categories, display the number of news articles in each category.
+- **📝 News Management:** Create, edit, and delete news posts.
+- **📬 Messages:** View messages submitted through the website contact form.
+- **⚙️ Settings:** Customize administration panel settings and change the admin panel title.
 
 ---
 
