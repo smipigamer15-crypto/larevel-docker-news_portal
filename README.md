@@ -145,3 +145,53 @@ Clone the repository and navigate to the project folder:
 ```bash
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
+```
+
+Configure Environment Variables
+```bash
+cp .env.docker .env
+```
+
+Start Docker Containers
+```bash
+docker compose up -d --build
+```
+
+Install PHP Dependencies
+```bash
+docker compose exec app composer install
+```
+
+Generate Application Key
+```bash
+docker compose exec app php artisan key:generate
+```
+
+Run Database Migrations
+```bash
+docker compose exec app php artisan migrate --seed
+```
+
+Install Frontend Dependencies
+```bash
+npm install
+npm run build
+------------
+npm run dev
+```
+
+Open the Website
+```bash
+**http://localhost:8080**
+```
+
+### 🐳 Useful Docker Commands
+
+| Command |	Description |
+| ------- | ----------- |
+| docker compose up -d | Start containers | 
+| docker compose down | Stop containers | 
+| docker compose ps	| Check container status |
+| docker compose logs -f | View application logs |
+| docker compose restart | Restart containers |
+| docker compose up -d --build | Rebuild containers |
