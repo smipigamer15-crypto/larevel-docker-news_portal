@@ -81,15 +81,17 @@ Users with Admin and Helper roles have access to the Admin button in the navigat
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
 | Category | Technologies |
-|----------|--------------|
-|  Backend | Laravel, PHP, JWT |
-|  Database | MySQL |
-|  Frontend | JavaScript, Bootstrap / Tailwind CSS |
-|  API Documentation | Swagger / OpenAPI |
-|  Container | Docker & Docker Compose |
+| :--- | :--- |
+| **Backend** | PHP 8.2+, Laravel 12, Laravel Sanctum (API Auth) |
+| **Database** | MySQL 8.0, Redis (Caching/Sessions) |
+| **Frontend** | JavaScript, Blade Templates, Tailwind CSS, Vite |
+| **Security & Roles** | Spatie Laravel Permission |
+| **API Documentation** | Swagger / OpenAPI (L5-Swagger) |
+| **Containerization** | Docker & Docker Compose |
+| **Dev Tools** | phpMyAdmin, Composer, NPM, Pest (Testing) |
 
 ---
 
