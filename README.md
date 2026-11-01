@@ -189,9 +189,9 @@ http://localhost:8080
 
 | Command |	Description |
 | ------- | ----------- |
-| ```bash docker compose up -d ``` | Start containers | 
-| ```bash docker compose down ``` | Stop containers | 
-| docker compose ps	| Check container status |
-| docker compose logs -f | View application logs |
-| docker compose restart | Restart containers |
-| docker compose up -d --build | Rebuild containers |
+| ``` docker compose up -d ``` | Start containers | 
+| ``` docker compose down ``` | Stop containers | 
+| ``` docker compose ps ```	| Check container status |
+| ``` docker compose logs -f ``` | View application logs |
+| ``` docker compose restart ``` | Restart containers |
+| ``` docker compose up -d --build ``` | Rebuild containers |
